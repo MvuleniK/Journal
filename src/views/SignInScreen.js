@@ -31,6 +31,7 @@ const Otp = () => {
             // show an alert in case of error
             alert(error)
         })
+        
         Alert.alert(
             'Login Successful. Welcome To Your Journal Diary',
         );

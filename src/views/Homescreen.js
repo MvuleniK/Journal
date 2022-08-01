@@ -1,196 +1,133 @@
-import React,{useState,useEffect} from 'react';
-import {View, Text, FlatList, StyleSheet, TextInput, TouchableOpacity, Keyboard, Pressable} from 'react-native';
-import {firebase} from '../config';
-import {FontAwesome} from '@expo/vector-icons';
-import {useNavigation} from '@react-navigation/native';
-// import {FontAwesome} from '@expo/vector-icons';
+import React,{useEffect,useState} from 'react';
+// import { signOut,onAuthStateChanged } from 'firebase/auth';
+// import {useNavigation} from '@react-navigation/core';
+// import {stackNavigationProp} from '@react-navigation/native-stack'
+// import { auth,db } from '../../firebase.js';
+// import { set,ref,onValue, remove } from 'firebase/database';
+// import {uid} from 'uid';
+import { StatusBar } from 'expo-status-bar';
+import { StyleSheet, Text, View } from 'react-native';
+import { Button } from 'react-native';
+import { Audio } from 'expo-av';
+
+
+
+export default function Homescreen(navigation) {
+  const [recording, setRecording]=useState();
+  const [recordings, setRecordings]=useState([]);
+  const [message, setMessage]=useState('');
+  // const navigate= useNavigation();
+//   useEffect(()=>{
+//     auth.onAuthStateChanged((user)=>{
+//       if(user){
+//         onValue(ref(db,`/${auth.currentUser.uid}`),(snapshot)=>{
+//           setRecordings([]);
+//           const data= snapshot.val();
+//           if(data !==null){
+//             Object.values(data).map((recording)=>{
+//               setRecordings((oldArray)=>[...oldArray,recording]);
+//             });
+//           }
+//         });
+//       }else if(!auth){
+//         alert('you logged')
+//       }
+//     });
+//   },[]);
 
 
 
 
 
 
+  async function startRecording(){
+    try{
+      const permission = await Audio.requestPermissionsAsync();
+      if(permission.status==='granted'){
+        await Audio.setAudioModeAsync({
+          allowsRecordingIOS:true,
+          playsInSilentModeIOS:true
+        });
+        const { recording } = await Audio.Recording.createAsync(
+          Audio.RECORDING_OPTIONS_PRESET_HIGH_QUALITY
+        );
+        setRecording(recording);
+      }else{
+        setMessage('please grant permission to app to access microphone');
+      }
+    }catch (err){
+      console.error('failed to start recording')
+    }
+  }
+  async function stopRecording(){
+    setRecording(undefined);
+    await recording.stopAndUnloadAsync();
+    let updatedRecordings = [...recordings];
+    const {sound , status}=await recording.createNewLoadedSoundAsync();
+    updatedRecordings.push({
+      sound:sound,
+      duration:getDurationFormatted(status.durationMills),
+      file:recording.getURI()
+    });
+    setRecordings(updatedRecordings);
+  }
+  function getDurationFormatted(millis){
+    let minutes = Math.floor(millis / 60000);
+       let seconds = ((millis % 60000) / 1000).toFixed(0);
+       return (seconds == 60 ? (minutes+1) + ":00" : minutes + ":" + (seconds < 10 ? "0" :
+       "") + seconds);
+  }
+  function getRecordingLines(){
 
-
-
-
-
-const Homescreen = () => {
-
-    const [todos, setTodos] = useState([]);
-    const todoRef = firebase.firestore().collection('todos');
-    const [addData, setAddData] = useState('');
-    const navigation = useNavigation();
-
-    // fetch or read the data from the firestore
-
-    useEffect(() => {
-      todoRef
-      .orderBy('createdAt','desc')
-      .onSnapshot(
-        querySnapshot => {
-          const todos = []
-          querySnapshot.forEach((doc)=>{
-            const {heading} = doc.data()
-            todos.push({
-              id:doc.id,
-              heading,
-            })
-          })
-          setTodos(todos)
-        }
+    return recordings.map((recordingLine, index)=>{
+      return(
+        <View key={index} style={styles.row}>
+          <Text style={styles.fill}>Recording{index+1}-{recordingLine.duration}</Text>
+          <Button style={styles.button} onPress={()=>recordingLine.sound.replayAsync() } title='play'/>
+          {/* <Button style={styles.button} onPress={handleDelete} title='delte'/>
+          <Button style={styles.button} onPress={writeToDatabase} title='save'/> */}
+        </View>
       )
-    }, [])
-
-
-    // delete a todo from firestore db
-
-    const deleteTodo =  (todos) => {
-      todoRef
-          .doc(todos.id)
-          .delete()
-          .then(()=>{
-            // show a successful alert
-            alert('Deleted Successfully')
-          })
-          .catch(error => {
-            alert(error);
-          })
-    }
-
-    // add a todo from 
-
-    const addTodo = () => {
-      // check if we have a todo
-        if(addData && addData.length > 0){
-          // get the time stamp
-          const timestamp = firebase.firestore.FieldValue.serverTimestamp();
-          const data = {
-            heading: addData,
-            createdAt:timestamp
-          };
-          todoRef
-             .add(data)
-              .then(() => {
-                  setAddData('');
-                  // release keyboard
-                  Keyboard.dismiss();
-            })
-            .catch((error) => {
-              alert(error);
-            })
-        }
-    }
-
-
-  return (
-    <View style={{flex:1}}>
-      <View style={styles.formContainer}>
-      <View style={styles.container}>
-          <TextInput
-          style = {styles.input}
-          placeholder = 'Add A New Todo'
-          placeholderTextColor = '#aaaaaa'
-          onChangeText = {(heading) => setAddData(heading)}
-          value = {addData}
-          underlineColorAndroid = 'transparent'
-          autoCapitalize='none'
-          />
-          <TouchableOpacity style = {styles.button} onPress={addTodo} >
-              <Text style={styles.button.buttonText}></Text>
-
-          </TouchableOpacity>
-
-          </View>
-          <FlatList
-            data = {todos}
-            numColumns={1}
-            renderItem={({item}) => (
-              <View>
-                  <Pressable
-                    style = {styles.container}
-                    onPress ={() => navigation.navigate('Detail',{item})}
-                  >
-
-                    <FontAwesome
-                        name = 'trash-o'
-                        color = 'red'
-                        onPress={() => deleteTodo(item)}
-                        style = {styles.todoIcon}
-                        />
-                      <View style={styles.innerContainer} >
-                        <Text style ={styles.itemHeading}>
-                          {item.heading[0].toUpperCase() + item.heading.slice(1)}
-
-                        </Text>
-                      </View>
-
-                  </Pressable>
-              </View>
-            ) }
-          />
-          </View>
-
-
-      {/* </View> */}
-    </View>
-  )
-}
-
-export default Homescreen;
-
-
-const styles = StyleSheet.create({
-
-  container:{
-    backgroundColor:'#e5e5e5',
-    padding:15,
-    borderRadius:15,
-    margin:5,
-    marginHorizontal:10,
-    flexDirection:'row',
-    alignItems:'center'
-  },
-  innerContainer:{
-    alignItems:'center',
-    flexDirecation:'column',
-    marginLeft:22, 
-  },
-  itemHeading:{
-    fontWeight:'bold',
-    fontSize:18,
-    marginRight:22,
-  },
-  formContainer:{
-    flexDirection:'row',
-    height:80,
-    marginLeft:10,
-    marginRight:100,
-  },
-  input:{
-    height:48,
-    borderRadius:5,
-    overflow:'hidden',
-    backgroundColor:'white',
-    paddingLeft:16,
-    flex:1,
-    marginRight:5,
-  },
-  button:{
-    height:47,
-    borderRadius:5,
-    backgroundColor:'#788eec',
-    width:80,
-    justifyContent:'center'
-  },
-  buttonText:{
-    color:'white',
-    fontSize:20
-  },
-  todoIcon: {
-    marginTop:5,
-    fontSize:20,
-    marginLeft:14
+    });
   }
 
-}) 
+  return (
+    <View style={styles.container}>
+      <Text>{message}</Text>
+      <View style={styles.bottonlogout}>
+      </View>
+      {/* <Button title='logout' onPress={handleSignOut}/> */}
+      <Button
+      title={recording ?'stop Recording' : 'start recording'}
+      onPress={recording ? stopRecording : startRecording}/>
+      <View>
+      {getRecordingLines()}
+      </View>
+      <StatusBar style="auto" />
+    </View>
+  );
+}
+const styles = StyleSheet.create({
+  container: {
+    flex:1,
+    width:'100%',
+    backgroundColor: 'whitesmoke',
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  row:{
+    flexDirection:'row',
+    alignItems:'center',
+    justifyContent:'center'
+  },
+  fill:{
+    flex:1,
+    margin:16
+  },
+  button:{
+    margin:16
+  },
+  bottonlogout:{
+    margin:10
+  }
+});
