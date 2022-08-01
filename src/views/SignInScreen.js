@@ -31,10 +31,11 @@ const Otp = () => {
             // show an alert in case of error
             alert(error)
         })
-        
+        // must go here navigation.navigate ('Homepage') for react native
         Alert.alert(
             'Login Successful. Welcome To Your Journal Diary',
         );
+
   }
     return(
         <View style={styles.container}>
