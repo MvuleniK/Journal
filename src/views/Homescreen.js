@@ -1,22 +1,9 @@
 import React,{useState,useEffect} from 'react';
-<<<<<<< HEAD
 import {View, Text, FlatList, StyleSheet, TextInput, TouchableOpacity, Keyboard, Pressable} from 'react-native';
-=======
-import {View, Text, FlatList, StyleSheet, TextInput, TouchableOpacity, Keyboard,Pressable} from 'react-native';
->>>>>>> 897cb9997940cee072ee3bf4447edde0858d77ba
 import {firebase} from '../config';
-import {Fontawesome} from '@expo/vector-icons';
-import {useNavigation} from '@react-navigation/native';
 import {FontAwesome} from '@expo/vector-icons';
-<<<<<<< HEAD
-=======
-import { keyboardProps } from 'react-native-web/dist/cjs/modules/forwardedProps';
-
-
-
-
-
->>>>>>> 897cb9997940cee072ee3bf4447edde0858d77ba
+import {useNavigation} from '@react-navigation/native';
+// import {FontAwesome} from '@expo/vector-icons';
 
 
 
@@ -32,7 +19,7 @@ const Homescreen = () => {
 
     const [todos, setTodos] = useState([]);
     const todoRef = firebase.firestore().collection('todos');
-    const [addData, setAddData] = useSate('');
+    const [addData, setAddData] = useState('');
     const navigation = useNavigation();
 
     // fetch or read the data from the firestore
@@ -66,7 +53,7 @@ const Homescreen = () => {
             // show a successful alert
             alert('Deleted Successfully')
           })
-          .cath(error => {
+          .catch(error => {
             alert(error);
           })
     }
@@ -83,19 +70,11 @@ const Homescreen = () => {
             createdAt:timestamp
           };
           todoRef
-<<<<<<< HEAD
              .add(data)
-              .then(() = {
+              .then(() => {
                   setAddData('');
                   // release keyboard
                   Keyboard.dismiss();
-=======
-            .add(data)
-            .then(()={
-              setAddData('');
-              // releas keyboard
-              Keyboard.dismiss();
->>>>>>> 897cb9997940cee072ee3bf4447edde0858d77ba
             })
             .catch((error) => {
               alert(error);
@@ -106,11 +85,8 @@ const Homescreen = () => {
 
   return (
     <View style={{flex:1}}>
-<<<<<<< HEAD
       <View style={styles.formContainer}>
-=======
       <View style={styles.container}>
->>>>>>> 897cb9997940cee072ee3bf4447edde0858d77ba
           <TextInput
           style = {styles.input}
           placeholder = 'Add A New Todo'
@@ -125,14 +101,13 @@ const Homescreen = () => {
 
           </TouchableOpacity>
 
-          <View>
+          </View>
           <FlatList
             data = {todos}
             numColumns={1}
             renderItem={({item}) => (
               <View>
                   <Pressable
-<<<<<<< HEAD
                     style = {styles.container}
                     onPress ={() => navigation.navigate('Detail',{item})}
                   >
@@ -141,7 +116,7 @@ const Homescreen = () => {
                         name = 'trash-o'
                         color = 'red'
                         onPress={() => deleteTodo(item)}
-                        style = {styels.todoIcon}
+                        style = {styles.todoIcon}
                         />
                       <View style={styles.innerContainer} >
                         <Text style ={styles.itemHeading}>
@@ -149,13 +124,6 @@ const Homescreen = () => {
 
                         </Text>
                       </View>
-=======
-                    style = {{styles.container}}
-                    onPress ={() => navigation.navigate('Detail',{item})}
-                  >
-
-                    <FontAwesome/>
->>>>>>> 897cb9997940cee072ee3bf4447edde0858d77ba
 
                   </Pressable>
               </View>
@@ -164,12 +132,11 @@ const Homescreen = () => {
           </View>
 
 
-      </View>
+      {/* </View> */}
     </View>
   )
 }
 
-<<<<<<< HEAD
 export default Homescreen;
 
 
@@ -227,6 +194,3 @@ const styles = StyleSheet.create({
   }
 
 }) 
-=======
-export default Homescreen
->>>>>>> 897cb9997940cee072ee3bf4447edde0858d77ba

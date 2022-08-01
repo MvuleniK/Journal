@@ -17,8 +17,8 @@ const Detail = ({route}) => {
             .update({
                 heading:textHeading,
             }).then(() => {
-                navigation.navigate('Home')
-            }).catch(error) => { 
+                navigation.navigate('Homepage')
+            }).catch((error) => { 
                 alert(error.message)
             })
         }
@@ -26,7 +26,7 @@ const Detail = ({route}) => {
 
 
     return(
-        <View style= {styles.container}>
+        <View style = {styles.container}>
             <TextInput
                 style={styles.textField}
                 onChangeText = {onChangeHeadingText}
@@ -50,7 +50,7 @@ export default Detail;
 
 
 
-const styles.StyleSheet.create({
+const styles = StyleSheet.create({
     container:{
         marginTop: 80,
         marginLeft:15,
@@ -62,7 +62,7 @@ const styles.StyleSheet.create({
         fontSize:15,
         color:'#000000',
         backgroundColor:'#e0e0e0',
-        borderRadius:
+        borderRadius:5
     },
     buttonUpdate:{
         marginTop:25,
