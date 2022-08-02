@@ -44,7 +44,7 @@ const SignInScreen = () => {
     alert(
         'Welcome',
     );
-    navigation.navigate('Home');
+    navigation.navigate('Homepage');
     }
   }
     return(
