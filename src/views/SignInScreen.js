@@ -6,36 +6,46 @@ import firebase from 'firebase/compat/app';
 
 
 
-const Otp = () => {
+const SignInScreen = () => {
    const [phoneNumber, setPhoneNumber] = useState('');
    const [code, setCode] = useState('');
    const [verificationId, setVerificationId] = useState(null);
    const recaptchaVerifier = useRef(null);
-   const sendVerification = () => {
+
+
+   const sendVerification = () =>{
+    if (!phoneNumber.trim()) {
+      alert('Please Enter Phone Number');
+      return;
+    }else{
     const phoneProvider = new firebase.auth.PhoneAuthProvider();
     phoneProvider
-        .verifyPhoneNumber(phoneNumber, recaptchaVerifier.current)
-        .then(setVerificationId);
-        setPhoneNumber('');
-   };
-    const confirmCode = () => {
-        const credential = firebase.auth.PhoneAuthProvider.credential(
-            verificationId,
-            code
-        );
-        firebase.auth().signInWithCredential(credential)
-        .then(() => {
-            setCode('')
-        })
-        .catch((error) => {
-            // show an alert in case of error
-            alert(error)
-        })
-        // must go here navigation.navigate ('Homepage') for react native
-        Alert.alert(
-            'Login Successful. Welcome To Your Journal Diary',
-        );
-
+    .verifyPhoneNumber(phoneNumber, recaptchaVerifier.current)
+    .then(setVerificationId);
+    setPhoneNumber('');
+    }
+  };
+  const confirmCode = () =>{
+    const credential=firebase.auth.PhoneAuthProvider.credential(
+        verificationId,
+        code
+    );
+    firebase.auth().signInWithCredential(credential)
+    .then(()=>{
+        setCode('');
+    })
+    .catch((error) => {
+        alert("Error");
+    })
+    if (!code.trim()) {
+      alert('Please Enter Code');
+      return;
+    }else{
+    alert(
+        'Welcome',
+    );
+    navigation.navigate('Home');
+    }
   }
     return(
         <View style={styles.container}>
@@ -93,7 +103,7 @@ const Otp = () => {
         </View>
     )
  }
-export default Otp
+export default SignInScreen
 const styles = StyleSheet.create({
         container:{
             flex:1,
