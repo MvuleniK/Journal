@@ -35,7 +35,7 @@ const SignInScreen = () => {
         setCode('');
     })
     .catch((error) => {
-        alert("Error");
+        alert(error);
     })
     if (!code.trim()) {
       alert('Please Enter Code');

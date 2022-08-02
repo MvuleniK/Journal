@@ -12,7 +12,7 @@ import Homepage from './src/views/Homescreen';
 import {NavigationContainer} from '@react-navigation/native';
 import {createStackNavigator} from '@react-navigation/stack';
 import 'react-native-gesture-handler';
-import { StatusBar } from 'expo-status-bar';
+// import { StatusBar } from 'expo-status-bar';
 
 // import BoardScreen from './src/components/BoardScreen';
 // import BoardDetailScreen from './components/BoardDetailScreen';
@@ -31,8 +31,8 @@ export default function App() {
 
       <Stack.Navigator>
         {/* <Stack.Screen name= "SignUp" component={SignUpScreen}/> */}
-        <Stack.Screen name= "SignIn" component={SignIn}/>
-        <Stack.Screen name= "Homepage" component={Homepage}/>
+        <Stack.Screen name= "SignIn" component={SignIn} options={{title: 'SignIn'}} />
+        <Stack.Screen name= "Homepage" component={Homepage}options={{title: 'Homepage'}}  />
         {/* <Stack.Screen name= "Detail" component={Detail}/> */}
         {/* <Stack.Screen name= "SignUp" component={SignUpScreen}/>
         <Stack.Screen name= "SignUp" component={SignUpScreen}/> */}
